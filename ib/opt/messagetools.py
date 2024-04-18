@@ -3,7 +3,7 @@
 
 from functools import partial, wraps
 
-from ib.ext.TickType import TickType
+from ibapi.ticktype import TickType
 
 
 ##
@@ -16,23 +16,23 @@ from ib.ext.TickType import TickType
 #                              for name, value in vs]]
 
 
-def messageFilter(function, predicate=lambda msg:True):
+def messageFilter(function, predicate=lambda msg: True):
     @wraps(function)
     def inner(msg):
         if predicate(msg):
             return function(msg)
+
     return inner
 
 
-askSizeFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.ASK_SIZE)
-askPriceFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.ASK)
+askSizeFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.ASK_SIZE)
+askPriceFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.ASK)
 
-bidSizeFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.BID_SIZE)
-bidPriceFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.BID)
+bidSizeFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.BID_SIZE)
+bidPriceFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.BID)
 
-lastSizeFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.LAST_SIZE)
-lastPriceFilter = partial(messageFilter, predicate=lambda msg:msg.field==TickType.LAST)
-
+lastSizeFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.LAST_SIZE)
+lastPriceFilter = partial(messageFilter, predicate=lambda msg: msg.field == TickType.LAST)
 
 # We don't need functions for filtering by message type because that's
 # what the reader/receiver/dispatcher already does.

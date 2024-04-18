@@ -1,14 +1,16 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ib.ext.Contract import Contract
-from ib.ext.Order import Order
+
 from ib.opt import ibConnection, message
 from time import sleep
 
+from ibapi.contract import Contract
+from ibapi.order import Order
+
 
 def watcher(msg):
-    print msg
+    print(msg)
 
 
 def makeStkContract(sym):
@@ -30,8 +32,8 @@ def makeOptContract(sym, exp, right, strike):
     newOptContract.m_strike = float(strike)
     newOptContract.m_exchange = 'SMART'
     newOptContract.m_currency = 'USD'
-    #newOptContract.m_localSymbol = ''
-    #newOptContract.m_primaryExch = ''
+    # newOptContract.m_localSymbol = ''
+    # newOptContract.m_primaryExch = ''
     return newOptContract
 
 
@@ -56,21 +58,20 @@ if __name__ == '__main__':
     con.connect()
 
     tickID = 36
-    orderID = -100 #50002 + 10
+    orderID = -100  # 50002 + 10
 
     stkContract = makeStkContract('EUR')
     con.reqMktData(1, stkContract, '', '')
 
     optContract = makeOptContract('QQQQ', '20080919', 'C', 34.0)
     con.reqMktData(tickID, optContract, '', '')
-    #sleep(5)
-    #con.cancelMktData(tickID)
-    #sleep(5)
-    optOrder = makeOptOrder( 'BUY', orderID, 'DAY', 'MKT')
+    # sleep(5)
+    # con.cancelMktData(tickID)
+    # sleep(5)
+    optOrder = makeOptOrder('BUY', orderID, 'DAY', 'MKT')
     con.placeOrder(orderID, optContract, optOrder)
 
-
-    print con.reqMktData(tickID, optContract, '', False)
+    print(con.reqMktData(tickID, optContract, '', False))
 
     sleep(5)
     con.disconnect()

@@ -22,8 +22,10 @@ def messageMethod(name, parameters):
     @param parameters list of method argument names
     @return newly created method (as closure)
     """
+
     def dispatchMethod(self, *arguments):
         self.dispatcher(name, dict(zip(parameters, arguments)))
+
     dispatchMethod.__name__ = name
     return dispatchMethod
 
@@ -34,6 +36,7 @@ class ReceiverType(type):
     When the Receiver class is defined, this class adds all of the
     wrapper methods to it.
     """
+
     def __new__(cls, name, bases, namespace):
         """ Creates a new type.
 

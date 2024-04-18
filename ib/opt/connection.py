@@ -26,6 +26,7 @@ class Connection(object):
     """ Encapsulates a connection to TWS.
 
     """
+
     def __init__(self, host, port, clientId, receiver, sender, dispatcher):
         """ Constructor.
 
@@ -51,7 +52,7 @@ class Connection(object):
         for obj in (self.dispatcher, self.receiver, self.sender):
             try:
                 return getattr(obj, name)
-            except (AttributeError, ):
+            except (AttributeError,):
                 pass
         err = "'%s' object has no attribute '%s'"
         raise AttributeError(err % (self.__class__.__name__, name))

@@ -14,21 +14,23 @@ from ast import NodeVisitor, parse
 from inspect import getsourcefile
 from re import match
 
-from ib.ext.AnyWrapper import AnyWrapper
-from ib.ext.EWrapper import EWrapper
-from ib.ext.EClientSocket import  EClientSocket
 from ib.lib import toTypeName
+from ibapi.client import EClient
+from ibapi.wrapper import EWrapper
 
 
 class SignatureAccumulator(NodeVisitor):
     """
 
     """
+
     def __init__(self, classes):
         NodeVisitor.__init__(self)
         self.signatures = []
-        for filename in (getsourcefile(cls) for cls in classes):
-            self.visit(parse(open(filename).read()))
+        for cls in classes:
+            names = getsourcefile(cls)
+            for filename in names:
+                self.visit(parse(open(filename).read()))
 
     def visit_FunctionDef(self, node):
         if sys.version_info[0] < 3:
@@ -63,10 +65,12 @@ def messageTypeNames():
 
     @return set of all message type names as strings
     """
+
     def typeNames():
         for types in registry.values():
             for typ in types:
                 yield typ.typeName
+
     return set(typeNames())
 
 
@@ -130,7 +134,7 @@ class Error(Message):
     __slots__ = ('id', 'errorCode', 'errorMsg')
 
 
-def buildMessageRegistry(seq, suffixes=[''], bases=(Message, )):
+def buildMessageRegistry(seq, suffixes=[''], bases=(Message,)):
     """ Construct message types and add to given mapping.
 
     @param seq pairs of method (name, arguments)
@@ -140,18 +144,16 @@ def buildMessageRegistry(seq, suffixes=[''], bases=(Message, )):
     for name, args in sorted(seq):
         for suffix in suffixes:
             typename = toTypeName(name) + suffix
-            typens = {'__slots__':args, '__assoc__':name, 'typeName':name}
+            typens = {'__slots__': args, '__assoc__': name, 'typeName': name}
             msgtype = type(typename, bases, typens)
             if name in registry:
-                registry[name] = registry[name] + (msgtype, )
+                registry[name] = registry[name] + (msgtype,)
             else:
-                registry[name] = (msgtype, )
+                registry[name] = (msgtype,)
 
 
-
-
-eWrapperAccum = EWrapperAccumulator((AnyWrapper, EWrapper))
-eClientAccum = EClientSocketAccumulator((EClientSocket, ))
+eClientAccum = EClientSocketAccumulator((EClient,))
+eWrapperAccum = EWrapperAccumulator((EWrapper,))
 
 wrapperMethods = list(eWrapperAccum.getSignatures())
 clientSocketMethods = list(eClientAccum.getSignatures())
@@ -161,22 +163,22 @@ buildMessageRegistry(wrapperMethods)
 buildMessageRegistry(clientSocketMethods, suffixes=('Pre', 'Post'))
 buildMessageRegistry(errorMethods)
 
+
 def initModule():
     target = globals()
     for messageTypes in registry.values():
         for messageType in messageTypes:
             target[messageType.typeName] = messageType
 
+
 try:
     initModule()
-except (NameError, ):
+except (NameError,):
     pass
 else:
-    del(initModule)
+    del (initModule)
 
 
-del(AnyWrapper)
-del(EWrapper)
-del(EClientSocket)
-del(eWrapperAccum)
-del(eClientAccum)
+del (EWrapper)
+del (eWrapperAccum)
+del (eClientAccum)

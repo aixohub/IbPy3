@@ -6,3 +6,10 @@ release-*
 ._*
 .DS_Store
 *.bak
+*.log
+
+
+.idea
+*.iws
+*.iml
+*.ipr

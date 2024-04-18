@@ -18,14 +18,13 @@ from optparse import OptionParser
 from random import randint
 from time import sleep, strftime, time
 
-from ib.ext.ComboLeg import ComboLeg
-from ib.ext.Contract import Contract
-from ib.ext.ExecutionFilter import ExecutionFilter
-from ib.ext.Order import Order
-from ib.ext.ScannerSubscription import ScannerSubscription
+
 from ib.lib.logger import logger as basicConfig
 from ib.opt import ibConnection, message
-
+from ibapi.contract import Contract, ComboLeg
+from ibapi.execution import ExecutionFilter
+from ibapi.order import Order
+from ibapi.scanner import ScannerSubscription
 
 error_msgs = {}
 order_ids = [0]

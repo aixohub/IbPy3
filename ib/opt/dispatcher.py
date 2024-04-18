@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from queue import Queue, Empty
 
 ##
 # Defines Dispatcher class to send messages to registered listeners.
 #
 ##
-from Queue import Queue, Empty
 
 from ib.lib import maybeName, logger
 from ib.opt import message

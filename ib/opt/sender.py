@@ -10,9 +10,8 @@
 ##
 from functools import wraps
 
-from ib.ext.EClientSocket import EClientSocket
-from ib.lib import toTypeName
-from ib.opt.message import registry, clientSocketMethods
+from ib.opt.message import clientSocketMethods
+from ibapi.client import EClient
 
 
 class Sender(object):
@@ -27,10 +26,11 @@ class Sender(object):
 
         @param dispatcher message dispatcher instance
         """
+        self.reconnect = None
         self.dispatcher = dispatcher
         self.clientMethodNames = [m[0] for m in clientSocketMethods]
 
-    def connect(self, host, port, clientId, handler, clientType=EClientSocket):
+    def connect(self, host, port, clientId, handler, clientType=EClient):
         """ Creates a TWS client socket and connects it.
 
         @param host name of host for connection; default is localhost
@@ -40,11 +40,12 @@ class Sender(object):
         @keyparam clientType=EClientSocket callable producing socket client
         @return True if connected, False otherwise
         """
-        def reconnect():
-            self.client = client = clientType(handler)
-            client.eConnect(host, port, clientId)
-            return client.isConnected()
-        self.reconnect = reconnect
+        self.client = EClient(handler)
+        self.client.connect(host, port, clientId)
+        return self.client.isConnected()
+
+
+    def reconnect(self,):
         return self.reconnect()
 
     def disconnect(self):
@@ -54,7 +55,7 @@ class Sender(object):
         """
         client = self.client
         if client and client.isConnected():
-            client.eDisconnect()
+            client.disconnect()
             return not client.isConnected()
         return False
 
@@ -65,20 +66,22 @@ class Sender(object):
         """
         try:
             value = getattr(self.client, name)
-        except (AttributeError, ):
+        except (AttributeError,):
             raise
         if name not in self.clientMethodNames:
             return value
         return value
-        preName, postName = name+'Pre', name+'Post'
+        preName, postName = name + 'Pre', name + 'Post'
         preType, postType = registry[preName], registry[postName]
+
         @wraps(value)
         def wrapperMethod(*args):
             mapping = dict(zip(preType.__slots__, args))
             results = self.dispatcher(preName, mapping)
             if not all(results):
-                return # raise exception instead?
+                return  # raise exception instead?
             result = value(*args)
             self.dispatcher(postName, mapping)
-            return result # or results?
+            return result  # or results?
+
         return wrapperMethod

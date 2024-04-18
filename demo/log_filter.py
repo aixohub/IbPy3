@@ -4,27 +4,24 @@ import optparse
 import re
 import sys
 
-
 usage = 'usage: %prog filename [options]'
 version = '%prog 0.1'
 log_format_default = '%(asctime)s ' + logging.BASIC_FORMAT
-log_level_names = logging._levelNames
+log_level_names = logging.getLoggerClass()
 log_level_default = log_level_names[logging.CRITICAL]
 
-
 log_level_map = {
-    'SYS' : logging.critical,
-    'ERR' : logging.error,
-    'WARN' : logging.warning,
-    'INFO' : logging.info,
-    'DET' : logging.debug,
-    }
-
+    'SYS': logging.critical,
+    'ERR': logging.error,
+    'WARN': logging.warning,
+    'INFO': logging.info,
+    'DET': logging.debug,
+}
 
 log_pat = (r'(?P<lang>\w+)\s+(?P<time>.*?)\s+(?P<servermsg>.*?\:\s+)'
-            '\[(?P<clientid>.*?)\:(?P<clientver>.*?)\:(?P<serverver>.*?)'
-            '\:(?P<clienttype>.*?)\:(?P<request>.*?)\:(?P<response>.*?)'
-            '\:(?P<version>.*?)\:(?P<loglevel>.*?)\]\s+(?P<msg>.*)')
+           '\[(?P<clientid>.*?)\:(?P<clientver>.*?)\:(?P<serverver>.*?)'
+           '\:(?P<clienttype>.*?)\:(?P<request>.*?)\:(?P<response>.*?)'
+           '\:(?P<version>.*?)\:(?P<loglevel>.*?)\]\s+(?P<msg>.*)')
 
 
 def log_filter(fd):
@@ -46,14 +43,14 @@ def get_options(argv):
     parser.add_option('-l', '--level', dest='loglevel',
                       help='output log level [default: %default]',
                       default=log_level_default)
-    return (parser, ) + parser.parse_args()
+    return (parser,) + parser.parse_args()
 
 
 class IbLogFormatter(logging.Formatter):
     def formatTime(self, record, datefmt=None):
         try:
             return record.__dict__['args']['time']
-        except (KeyError, ):
+        except (KeyError,):
             return logging.Formatter.formatTime(self, record)
 
 
@@ -71,15 +68,15 @@ def main(args=None):
 
     try:
         opts.loglevel = log_level_names[int(opts.loglevel)]
-    except (ValueError, ):
+    except (ValueError,):
         pass
-    except (KeyError, ):
+    except (KeyError,):
         badlevel()
         return
 
     try:
         level = log_level_names[opts.loglevel]
-    except (KeyError, ):
+    except (KeyError,):
         badlevel()
         return
 
@@ -95,8 +92,5 @@ def main(args=None):
 if __name__ == '__main__':
     try:
         main()
-    except (KeyboardInterrupt, ):
+    except (KeyboardInterrupt,):
         pass
-
-
-

@@ -6,22 +6,23 @@
 ##
 
 from time import sleep
-from ib.ext.Contract import Contract
-from ib.ext.TickType import TickType
+
 from ib.opt import ibConnection, message
 from ib.opt import messagetools
+from ibapi.contract import Contract
+from ibapi.ticktype import TickType
 
 all_messages = []
 
 def my_account_handler(msg):
     all_messages.append(msg)
-    print msg
+    print (msg)
 
 
 
 def my_tick_handler(msg):
     all_messages.append(msg)
-    print msg
+    print (msg)
 
 
 # wrap our tick handler to get only bid size
@@ -39,12 +40,12 @@ cash_handler = messagetools.messageFilter(my_account_handler, lambda m:m.key.low
 # try out the new before and after send messages
 def pre_req_account_updates(msg):
     all_messages.append(msg)
-    print 'pre account updates: ', msg
+    print ('pre account updates: ', msg)
     return True
 
 def post_req_account_updates(msg):
     all_messages.append(msg)
-    print 'post account updates: ', msg
+    print ('post account updates: ', msg)
 
 
 if __name__ == '__main__':

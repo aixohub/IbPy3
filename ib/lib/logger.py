@@ -23,7 +23,7 @@ level = int(os.environ.get('IBPY_LOGLEVEL', logging.DEBUG))
 
 
 def logger(name='ibpy', level=level, format=format,
-               datefmt=datefmt):
+           datefmt=datefmt):
     """ Configures and returns a logging instance.
 
     @param name ignored

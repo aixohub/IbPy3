@@ -7,8 +7,9 @@
 ##
 
 from time import sleep
-from ib.ext.Contract import Contract
+
 from ib.opt import ibConnection, message
+from ibapi.contract import Contract
 
 
 def my_account_handler(msg):

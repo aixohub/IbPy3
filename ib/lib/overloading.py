@@ -40,7 +40,8 @@ from types import MethodType as instancemethod
 
 # Make the environment more like Python 3.0
 __metaclass__ = type
-from itertools import izip as zip
+
+
 
 
 class overloaded:
@@ -63,15 +64,17 @@ class overloaded:
         .register(t1, t2)(f) is equivalent to .register_func((t1, t2), f).
 
         """
+
         def helper(func):
             self.register_func(types, func)
             return func
+
         return helper
 
     def register_func(self, types, func):
         """Helper to register an implementation."""
         self.registry[tuple(types)] = func
-        self.cache = {} # Clear the cache (later we can optimize this).
+        self.cache = {}  # Clear the cache (later we can optimize this).
 
     def __call__(self, *args):
         """Call the overloaded function."""
@@ -101,7 +104,7 @@ class overloaded:
         n = len(mros)
         candidates = [sig for sig in self.registry
                       if len(sig) == n and
-                         all(t in mro for t, mro in zip(sig, mros))]
+                      all(t in mro for t, mro in zip(sig, mros))]
         if not candidates:
             # No match at all -- use the default function.
             return self.default_func

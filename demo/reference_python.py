@@ -10,10 +10,10 @@
 from sys import argv
 from time import sleep, strftime
 
-from ib.ext.Contract import Contract
-from ib.ext.EWrapper import EWrapper
-from ib.ext.EClientSocket import EClientSocket
-from ib.ext.ExecutionFilter import ExecutionFilter
+from ibapi.client import EClient
+from ibapi.contract import Contract
+from ibapi.execution import ExecutionFilter
+from ibapi.wrapper import EWrapper
 
 
 def showmessage(message, mapping):
@@ -189,63 +189,62 @@ def ref(method):
 
 
 class ReferenceApp:
-    def __init__(self, host='localhost', port=7496, clientId=0):
+    def __init__(self, host='localhost', port=7497, clientId=0):
         self.host = host
         self.port = port
         self.clientId = clientId
         self.wrapper = ReferenceWrapper()
-        self.connection = EClientSocket(self.wrapper)
+        self.connection = EClient(self.wrapper)
 
-    @ref
-    def eConnect(self):
-        self.connection.eConnect(self.host, self.port, self.clientId)
+    def connect(self):
+        self.connection.connect(self.host, self.port, self.clientId)
 
-    @ref
+     
     def reqAccountUpdates(self):
         self.connection.reqAccountUpdates(1, '')
 
-    @ref
+     
     def reqOpenOrders(self):
         self.connection.reqOpenOrders()
 
-    @ref
+     
     def reqExecutions(self):
         filt = ExecutionFilter()
-        self.connection.reqExecutions(0, filt)
+        self.connection.exerciseOptions(0, filt)
 
-    @ref
+     
     def reqIds(self):
         self.connection.reqIds(10)
 
-    @ref
+     
     def reqNewsBulletins(self):
         self.connection.reqNewsBulletins(1)
 
-    @ref
+     
     def cancelNewsBulletins(self):
         self.connection.cancelNewsBulletins()
 
-    @ref
+     
     def setServerLogLevel(self):
         self.connection.setServerLogLevel(3)
 
-    @ref
+     
     def reqAutoOpenOrders(self):
         self.connection.reqAutoOpenOrders(1)
 
-    @ref
+     
     def reqAllOpenOrders(self):
         self.connection.reqAllOpenOrders()
 
-    @ref
+     
     def reqManagedAccts(self):
         self.connection.reqManagedAccts()
 
-    @ref
+     
     def requestFA(self):
         self.connection.requestFA(1)
 
-    @ref
+     
     def reqMktData(self):
         contract = Contract() #
         contract.m_symbol = 'AUD'
@@ -254,7 +253,7 @@ class ReferenceApp:
         contract.m_exchange = 'IDEALPRO'
         self.connection.reqMktData(1, contract, '', False)
 
-    @ref
+     
     def reqHistoricalData(self):
         contract = Contract()
         contract.m_symbol = 'QQQQ'
@@ -271,10 +270,10 @@ class ReferenceApp:
             useRTH=0,
             formatDate=1)
 
-    @ref
-    def eDisconnect(self):
+     
+    def disconnect(self):
         sleep(5)
-        self.connection.eDisconnect()
+        self.connection.disconnect()
 
 
 if __name__ == '__main__':
@@ -282,13 +281,13 @@ if __name__ == '__main__':
     methods = argv[1:]
 
     if not methods:
-        methods = ['eConnect', 'eDisconnect', ]
+        methods = ['connect', 'disconnect', ]
     elif methods == ['all']:
         methods = allMethods
-    if 'eConnect' not in methods:
-        methods.insert(0, 'eConnect')
-    if 'eDisconnect' not in methods:
-        methods.append('eDisconnect')
+    if 'connect' not in methods:
+        methods.insert(0, 'connect')
+    if 'disconnect' not in methods:
+        methods.append('disconnect')
 
     print(('### calling functions:', str.join(', ', methods)))
     for mname in methods:

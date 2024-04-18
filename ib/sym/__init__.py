@@ -5,6 +5,7 @@
 def durationMethod(k):
     def m(cls, val):
         return '%s %s' % (val, k)
+
     return classmethod(m)
 
 
@@ -41,9 +42,10 @@ class HDShow:
     ask = 'ASK'
     bid_ask = 'BID/ASK'
 
+
 class HDDateFormat:
-    long = 1 # yyyymmdd{space}{space}hh:mm:dd
-    short = 2 # 1/1/1970 GMT
+    long = 1  # yyyymmdd{space}{space}hh:mm:dd
+    short = 2  # 1/1/1970 GMT
 
 
 class YesNo:
@@ -58,14 +60,18 @@ class RTH(YesNo):
 class AllOrNone(YesNo):
     pass
 
+
 class Override(YesNo):
     pass
+
 
 class FirmQuoteOnly(YesNo):
     pass
 
+
 class ETradeOnly(YesNo):
     pass
+
 
 class ContinuousUpdate(YesNo):
     pass
@@ -76,9 +82,10 @@ class AuctionStrategy:
     improvement = 2
     transparent = 3
 
+
 class ServerLogLevel:
     system, error, warning, information, detail = \
-            sys, err, warn, info, det = range(1, 6)
+        sys, err, warn, info, det = range(1, 6)
 
 
 class FaDataType:
@@ -123,6 +130,7 @@ class Rule80a:
 class RefPriceType:
     avg = 1
     bidask = 2
+
 
 class VolatilityType:
     daily = 1
